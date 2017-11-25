@@ -30,9 +30,9 @@ trait CursorPagination
     /**
      * Paginate the given cursor with the cursor  method.
      *
-     * @param   int|null    $perPage
+     * @param   int|null $perPage
      * @param   string|null $cursorColumn
-     * @param   string      $cursorDirection
+     * @param   string $cursorDirection
      * @return  CursorPaginator
      */
     public function cursorPaginate($perPage = null, $cursorColumn = null, $cursorDirection = 'DESC')
@@ -43,7 +43,7 @@ trait CursorPagination
 
         if ($after = Arr::get($input, 'after')) {
             return $this->newAfterCursorPaginator($after, $perPage, $cursorColumn);
-        }   else if ($before = Arr::get($input, 'before')) {
+        } else if ($before = Arr::get($input, 'before')) {
             return $this->newBeforeCursorPaginator($before, $perPage, $cursorColumn);
         } else {
             return $this->newDefaultCursorPaginator($perPage, $cursorColumn);
@@ -51,24 +51,11 @@ trait CursorPagination
     }
 
     /**
-     * Create CursorPaginator instance using `before` query.
-     *
-     * @param   mixed               $id
-     * @param   int|null            $perPage
-     * @param   string|array|null   $orderBy
-     * @return  CursorPaginator
-     */
-    protected function newBeforeCursorPaginator($id, $perPage, $orderBy)
-    {
-        return $this->newCursorPaginator($id, true, $perPage, $orderBy);
-    }
-
-    /**
      * Create CursorPaginator instance using `after` query.
      *
-     * @param   mixed               $id
-     * @param   int|null            $perPage
-     * @param   string|array|null   $orderBy
+     * @param   mixed $id
+     * @param   int|null $perPage
+     * @param   string|array|null $orderBy
      * @return  CursorPaginator
      */
     protected function newAfterCursorPaginator($id, $perPage, $orderBy)
@@ -77,25 +64,13 @@ trait CursorPagination
     }
 
     /**
-     * Create CursorPaginator instance from beginning of table.
-     *
-     * @param   int|null            $perPage
-     * @param   string|array|null   $orderBy
-     * @return  CursorPaginator
-     */
-    protected function newDefaultCursorPaginator($perPage = null, $orderBy = null)
-    {
-        return $this->newCursorPaginator(null, false, $perPage, $orderBy);
-    }
-
-    /**
      * Create CursorPaginator instance after applying the relevant query and retrieving data.
      *
-     * @param   mixed               $id
-     * @param   bool                $isBefore
-     * @param   int|null            $perPage
-     * @param   string|array|null   $cursorColumn
-     * @param   string|null         $primaryKey
+     * @param   mixed $id
+     * @param   bool $isBefore
+     * @param   int|null $perPage
+     * @param   string|array|null $cursorColumn
+     * @param   string|null $primaryKey
      * @return  CursorPaginator
      */
     protected function newCursorPaginator($id = null, $isBefore = false, $perPage = null, $cursorColumn = null, $primaryKey = null)
@@ -112,13 +87,38 @@ trait CursorPagination
     }
 
     /**
+     * Create CursorPaginator instance using `before` query.
+     *
+     * @param   mixed $id
+     * @param   int|null $perPage
+     * @param   string|array|null $orderBy
+     * @return  CursorPaginator
+     */
+    protected function newBeforeCursorPaginator($id, $perPage, $orderBy)
+    {
+        return $this->newCursorPaginator($id, true, $perPage, $orderBy);
+    }
+
+    /**
+     * Create CursorPaginator instance from beginning of table.
+     *
+     * @param   int|null $perPage
+     * @param   string|array|null $orderBy
+     * @return  CursorPaginator
+     */
+    protected function newDefaultCursorPaginator($perPage = null, $orderBy = null)
+    {
+        return $this->newCursorPaginator(null, false, $perPage, $orderBy);
+    }
+
+    /**
      * Scope to only show elements before a given id.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed         $before
-     * @param int|null      $perPage
-     * @param string|null   $orderBy
-     * @param string|null   $key
+     * @param mixed $before
+     * @param int|null $perPage
+     * @param string|null $orderBy
+     * @param string|null $key
      */
     public function scopeBefore($query, $before, $perPage = null, $orderBy = null, $key = null)
     {
@@ -126,28 +126,14 @@ trait CursorPagination
     }
 
     /**
-     * Scope to only show elements after a given id.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed         $after
-     * @param int|null      $perPage
-     * @param string|null   $orderBy
-     * @param string|null   $key
-     */
-    public function scopeAfter($query, $after, $perPage = null, $orderBy = null, $key = null)
-    {
-        $this->applyScope($query, $after, '<', $perPage, $orderBy, $key);
-    }
-
-    /**
      * Apply the scope.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed         $id
-     * @param string        $operator
-     * @param int|null      $perPage
-     * @param string|null   $cursorColumn
-     * @param string|null   $primaryKey
+     * @param mixed $id
+     * @param string $operator
+     * @param int|null $perPage
+     * @param string|null $cursorColumn
+     * @param string|null $primaryKey
      */
     protected function applyScope($query, $id, $operator, $perPage = null, $cursorColumn = null, $primaryKey = null)
     {
@@ -185,5 +171,19 @@ trait CursorPagination
                 });
             }
         }
+    }
+
+    /**
+     * Scope to only show elements after a given id.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed $after
+     * @param int|null $perPage
+     * @param string|null $orderBy
+     * @param string|null $key
+     */
+    public function scopeAfter($query, $after, $perPage = null, $orderBy = null, $key = null)
+    {
+        $this->applyScope($query, $after, '<', $perPage, $orderBy, $key);
     }
 }
