@@ -23,7 +23,7 @@ interface CursorPaginator
      * @param   mixed $cursor
      * @return  string
      */
-    public function beforeUrl($cursor);
+    public function beforeUrl($cursor = null);
 
     /**
      * Generate `after` url.
@@ -31,7 +31,7 @@ interface CursorPaginator
      * @param   mixed $cursor
      * @return  string
      */
-    public function afterUrl($cursor);
+    public function afterUrl($cursor = null);
 
     /**
      * Get the items.

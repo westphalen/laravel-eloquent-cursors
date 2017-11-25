@@ -111,6 +111,8 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     protected function setItems(Collection $items)
     {
+        $this->count = $items->count();
+
         if ($this->current && ($first = $items->first())) {
             $first = $first instanceof Model ? $first->getKey() : $first;
             $this->beforeKey = $first;
@@ -125,7 +127,7 @@ class CursorPaginator implements CursorPaginatorInterface
     }
 
     /**
-     * Determine if there is more items in the data store.
+     * Determine if there are more items in the data store.
      *
      * @return bool
      */
@@ -141,10 +143,6 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     public function count()
     {
-        if ($this->count === null) {
-            $this->count = $this->items instanceof Collection ? $this->items->count() : count($this->items);
-        }
-
         return $this->count;
     }
 
