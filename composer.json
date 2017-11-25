@@ -1,0 +1,37 @@
+{
+  "name": "westphalen/laravel-eloquent-cursors",
+  "description": "Simple Cursor Pagination for Laravel.",
+  "authors": [
+    {
+      "name": "Sune Westphalen",
+      "email": "sune@westphalen.me"
+    }
+  ],
+  "license": "MIT",
+  "type": "package",
+  "require": {
+    "php": ">=7.0",
+    "alsofronie/eloquent-uuid": "dev-master"
+  },
+  "require-dev": {
+    "laravel/framework": "~5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Westphalen\\Laravel\\Cursors\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": "Westphalen\\Laravel\\Cursors\\Providers\\CursorPaginationServiceProvider"
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "secure-http": false
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
