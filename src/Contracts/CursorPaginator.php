@@ -18,6 +18,13 @@ interface CursorPaginator
     public function total();
 
     /**
+     * Get the count.
+     *
+     * @return int
+     */
+    public function count();
+
+    /**
      * Generate `before` url.
      *
      * @param   mixed $cursor
@@ -67,4 +74,18 @@ interface CursorPaginator
      * @return bool
      */
     public function hasMorePages();
+
+    /**
+     * Determine if there are more items before the current cursor.
+     *
+     * @return bool
+     */
+    public function hasPagesBefore();
+
+    /**
+     * Determine if there are more items after the current cursor.
+     *
+     * @return bool
+     */
+    public function hasPagesAfter();
 }

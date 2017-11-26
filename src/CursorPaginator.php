@@ -42,14 +42,14 @@ class CursorPaginator implements CursorPaginatorInterface
      *
      * @var mixed|null
      */
-    protected $beforeKey;
+    protected $firstKey;
 
     /**
      * The last item, used for generating `after` cursor.
      *
      * @var mixed|null
      */
-    protected $afterKey;
+    protected $lastKey;
 
     /**
      * The number of items per page (limit), if provided.
@@ -78,6 +78,11 @@ class CursorPaginator implements CursorPaginatorInterface
      * @var string
      */
     protected $path = '/';
+
+    /**
+     * @var bool
+     */
+    protected $skipEmptyUrls = false;
 
     /**
      * CursorPaginator constructor.
@@ -113,37 +118,17 @@ class CursorPaginator implements CursorPaginatorInterface
     {
         $this->count = $items->count();
 
-        if ($this->current && ($first = $items->first())) {
+        if ($first = $items->first()) {
             $first = $first instanceof Model ? $first->getKey() : $first;
-            $this->beforeKey = $first;
+            $this->firstKey = $first;
         }
 
-        if ($this->hasMorePages() && ($last = $items->last())) {
+        if ($last = $items->last()) {
             $last = $last instanceof Model ? $last->getKey() : $last;
-            $this->afterKey = $last;
+            $this->lastKey = $last;
         }
 
         $this->items = $items;
-    }
-
-    /**
-     * Determine if there are more items in the data store.
-     *
-     * @return bool
-     */
-    public function hasMorePages()
-    {
-        return $this->count() === $this->perPage && ($this->total === null || $this->total > $this->perPage);
-    }
-
-    /**
-     * Get the count.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return $this->count;
     }
 
     /**
@@ -172,6 +157,46 @@ class CursorPaginator implements CursorPaginatorInterface
     }
 
     /**
+     * Determine if there are more items in the data store.
+     *
+     * @return bool
+     */
+    public function hasMorePages()
+    {
+        return $this->hasPagesBefore() && $this->hasPagesAfter();
+    }
+
+    /**
+     * Determine if there are more items before the current cursor.
+     *
+     * @return bool
+     */
+    public function hasPagesBefore()
+    {
+        return $this->current !== null;
+    }
+
+    /**
+     * Determine if there are more items after the current cursor.
+     *
+     * @return bool
+     */
+    public function hasPagesAfter()
+    {
+        return $this->count() === $this->perPage && ($this->total === null || $this->total > $this->perPage);
+    }
+
+    /**
+     * Get the count.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->count;
+    }
+
+    /**
      * Get the items.
      *
      * @return Collection
@@ -189,8 +214,8 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     public function beforeUrl($cursor = null)
     {
-        $cursor = $cursor ?: $this->beforeKey;
-        return $this->url($cursor, false);
+        $cursor = $cursor ?: ($this->firstKey !== null || !$this->skipEmptyUrls ? $this->firstKey : null);
+        return $this->url($cursor, true);
     }
 
     /**
@@ -221,8 +246,8 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     public function afterUrl($cursor = null)
     {
-        $cursor = $cursor ?: $this->afterKey;
-        return $this->url($cursor, true);
+        $cursor = $cursor ?: ($this->lastKey !== null || !$this->skipEmptyUrls ? $this->lastKey : null);
+        return $this->url($cursor, false);
     }
 
     /**
@@ -242,7 +267,7 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     public function firstItem()
     {
-        return $this->beforeKey;
+        return $this->firstKey;
     }
 
     /**
@@ -252,7 +277,7 @@ class CursorPaginator implements CursorPaginatorInterface
      */
     public function lastItem()
     {
-        return $this->afterKey;
+        return $this->lastKey;
     }
 
     /**
@@ -263,5 +288,26 @@ class CursorPaginator implements CursorPaginatorInterface
     public function perPage()
     {
         return $this->perPage;
+    }
+
+    /**
+     * Toggle don't return urls for a direction that is not known to have more items.
+     *
+     * @param   bool $value
+     * @return  void
+     */
+    public function skipEmptyUrls($value = true)
+    {
+        $this->skipEmptyUrls($value);
+    }
+
+    /**
+     * Get the state of skipEmptyUrls.
+     *
+     * @return bool
+     */
+    public function getSkipEmptyUrls()
+    {
+        return $this->skipEmptyUrls;
     }
 }
